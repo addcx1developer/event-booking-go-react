@@ -68,3 +68,17 @@ func (s *EventStore) GetAll() ([]models.Event, error) {
 
 	return events, nil
 }
+
+func (s *EventStore) GetByID(id int64) (*models.Event, error) {
+	query := "SELECT * FROM events WHERE id = ?"
+	row := s.db.QueryRow(query, id)
+
+	var event models.Event
+
+	err := row.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &event, nil
+}
