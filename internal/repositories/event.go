@@ -113,3 +113,21 @@ func (s *EventStore) Update(e models.Event) error {
 
 	return nil
 }
+
+func (s *EventStore) Delete(e models.Event) error {
+	query := "DELETE FROM events WHERE id = ?"
+
+	stmt, err := s.db.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(e.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
