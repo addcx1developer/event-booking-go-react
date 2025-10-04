@@ -11,7 +11,7 @@ type EventStore struct {
 	db *sql.DB
 }
 
-func New(db *sql.DB) *EventStore {
+func NewEventStore(db *sql.DB) *EventStore {
 	return &EventStore{
 		db: db,
 	}
