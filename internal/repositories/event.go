@@ -131,3 +131,24 @@ func (s *EventStore) Delete(e models.Event) error {
 
 	return nil
 }
+
+func (s *EventStore) Register(e *models.Event, userId int64) error {
+	query := `
+		INSERT INTO registrations (event_id, user_id)
+		VALUES (?, ?)
+	`
+
+	stmt, err := s.db.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(e.ID, userId)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
