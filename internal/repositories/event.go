@@ -152,3 +152,24 @@ func (s *EventStore) Register(e *models.Event, userId int64) error {
 
 	return nil
 }
+
+func (s *EventStore) Cancel(eventId, userId int64) error {
+	query := `
+		DELETE FROM registrations
+		WHERE event_id = ? AND user_id = ?
+	`
+
+	stmt, err := s.db.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(eventId, userId)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
