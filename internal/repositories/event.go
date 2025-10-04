@@ -43,3 +43,28 @@ func (s *EventStore) Save(e *models.Event) error {
 
 	return nil
 }
+
+func (s *EventStore) GetAll() ([]models.Event, error) {
+	query := "SELECT * FROM events"
+
+	rows, err := s.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var events []models.Event
+	for rows.Next() {
+		var event models.Event
+
+		err := rows.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID)
+		if err != nil {
+			return nil, err
+		}
+
+		events = append(events, event)
+	}
+
+	return events, nil
+}
