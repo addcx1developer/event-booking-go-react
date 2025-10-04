@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/addcx1developer/event-booking-go-react/internal/models"
 )
@@ -81,4 +82,34 @@ func (s *EventStore) GetByID(id int64) (*models.Event, error) {
 	}
 
 	return &event, nil
+}
+
+func (s *EventStore) Update(e models.Event) error {
+	query := `
+		UPDATE events
+		SET name = ?, description = ?, location = ?, date_time = ?
+		WHERE id = ?
+	`
+
+	stmt, err := s.db.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	result, err := stmt.Exec(e.Name, e.Description, e.Location, e.DateTime, e.ID)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to retrieve affected rows")
+	}
+	if rowsAffected == 0 {
+		return fmt.Errorf("no event found with ID %d", e.ID)
+	}
+
+	return nil
 }
